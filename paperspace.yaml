@@ -2,17 +2,17 @@ apiVersion: v1
 # To disable the application change enabled: false
 enabled: true
 # The name of your project
-name: my-fastapi-hf-app
+name: mpt-125m-app
 # You should replace this with a Docker image you build
-image: paperspace/fastapi-hf-template-app:2023-06-20
+image: paperspace/fastapi-hf-mpt-125m-app:2023-06-22
 # Using integrations to bring in external resource
 # (e.g. Hugging Face model, S3 bucket)
 integrations:
   - type: git-lfs # git-lfs used for Hugging Face models
-    name: opus-mt-en-es
-    url: https://huggingface.co/Helsinki-NLP/opus-mt-en-es # English to Spanish translation model
-    path: /opt/integrations/opus-mt-en-es
-# Deploy safely by using health checks, preventing traffic from being 
+    name: mpt-125m
+    url: https://huggingface.co/nmb-paperspace-hf/mpt-125m
+    path: /opt/integrations/mpt-125m
+# Deploy safely by using health checks, preventing traffic from being
 # routed to unhealthy instances
 healthChecks:
   startup:
@@ -29,7 +29,7 @@ healthChecks:
 # settings here
 resources:
   replicas: 1
-  machineType: C5
+  machineType: A100
   # The ports the service is running on inside the above image
   ports: [8000]
   autoscaling:
