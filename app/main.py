@@ -1,30 +1,10 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from transformers import AutoTokenizer, pipeline
-
-import torch
-import transformers
-from transformers import AutoTokenizer
+from transformers import pipeline
 
 # function to return a transformers pipeline for translation
-#def get_translation_pipeline():
-#    return pipeline('translation', model='/opt/integrations/opus-mt-en-es', tokenizer='/opt/integrations/opus-mt-en-es')
-
-def get_text_generation_pipeline():
-
-    pipe = pipeline(
-        'text-generation',
-        model='/opt/integrations/mpt-125m',
-        tokenizer=AutoTokenizer.from_pretrained('EleutherAI/gpt-neox-20b'),
-        device='cuda:0',
-        trust_remote_code=True,
-        use_auth_token='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',
-        max_new_tokens=100,
-        do_sample=True,
-        use_cache=True
-        )
-
-    return pipe
+def get_translation_pipeline():
+    return pipeline('translation', model='/opt/integrations/opus-mt-en-es', tokenizer='/opt/integrations/opus-mt-en-es')
 
 models = {}
 
@@ -33,8 +13,7 @@ models = {}
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Load the ML model on startup
-    #models['translation'] = get_translation_pipeline()
-    models['generated_text'] = get_text_generation_pipeline()
+    models['translation'] = get_translation_pipeline()
     yield
     # Clean up the ML models and release the resources on shutdown
     models.clear()
@@ -60,14 +39,10 @@ def readiness_check():
 async def root():
     return {"message": "Welcome to my FastAPI + Hugging Face app!"}
 
-## translate endpoint that takes in an english string and returns the spanish translation
-#@app.get("/translate")
-#async def translate(text_input: str):
-#    return models['translation'](text_input)[0]
+# translate endpoint that takes in an english string and returns the spanish translation
+@app.get("/translate")
+async def translate(text_input: str):
+    return models['translation'](text_input)[0]
 
-# "generate" endpoint that takes in a prompt and returns the model's response
-@app.get("/generate")
-async def generate(text_input: str):
-    return models['generated_text'](text_input)[0]
 
 # Add additional endpoints below
