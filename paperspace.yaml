@@ -29,7 +29,7 @@ healthChecks:
 # settings here
 resources:
   replicas: 1
-  machineType: A100
+  machineType: A6000
   # The ports the service is running on inside the above image
   ports: [8000]
   autoscaling:
